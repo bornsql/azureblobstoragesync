@@ -6,6 +6,8 @@ Furthermore, there is no ability in any version of SQL Server prior to 2016, to 
 
 **AzureBlobStorageSync** is a free tool that allows you to continue backing up your database locally, for any version of SQL Server, and synchronise your files to Azure Blob Storage on a schedule of your choosing.
 
+It can work alongside your existing backup process, and leverages [Ola Hallengren's](https://ola.hallengren.com/) Maintenance Solution.
+
 There is a companion restore tool, **AzureBlobStorageRestore**, also free, which is able to download the latest database (including Full, Differential and Transaction Log Backups), only knowing the name of the database, and build a restore script. This is especially useful if you suffer a catastrophic failure and have no other knowledge of the backups (e.g. the content of the msdb database).
 
 ### How Do I Do It?
