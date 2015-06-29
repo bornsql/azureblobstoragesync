@@ -11,7 +11,7 @@ namespace AzureBlobStorageHelper
 		/// <returns></returns>
 		public static string GetAzureConnectionString()
 		{
-			return ConfigurationManager.ConnectionStrings["StorageConnectionString"].ConnectionString;
+			return ConfigurationManager.ConnectionStrings["AzureConnectionString"].ConnectionString;
 		}
 
 		public static bool GetConfigurationBoolean(string configurationKey)
