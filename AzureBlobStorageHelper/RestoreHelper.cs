@@ -197,7 +197,7 @@ namespace AzureBlobStorageHelper
 					line = @"SELECT @sql = REPLACE(@template, N'{%%MOVE%%}', @sql);";
 					template.AppendLine(line);
 
-					line = @"EXEC (@sql);";
+					line = @"EXEC sp_executesql @sql;";
 					template.AppendLine(line);
 
 					script.AppendLine(template.ToString());
