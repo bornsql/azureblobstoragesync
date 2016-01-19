@@ -10,59 +10,10 @@ namespace AzureBlobStorageHelper
 	public class RestoreHelper
 	{
 		private readonly AzureHelper m_azureHelper;
-		private readonly string m_localDirectory;
 
 		public RestoreHelper()
 		{
 			m_azureHelper = new AzureHelper();
-
-			m_localDirectory = ConfigHelper.GetConfigurationValue("LocalPath");
-		}
-
-		/// <summary>
-		/// Downloads the files from Azure.
-		/// </summary>
-		/// <param name="filesToDownload">The files to download.</param>
-		/// <returns></returns>
-		private Dictionary<FileInfo, string> DownloadFilesFromAzure(IEnumerable<BlobItem> filesToDownload)
-		{
-			var files = new Dictionary<FileInfo, string>();
-			var blobClient = m_azureHelper.StorageAccount.CreateCloudBlobClient();
-			var container = blobClient.GetContainerReference(m_azureHelper.ContainerName);
-
-			foreach (var file in filesToDownload)
-			{
-				// Retrieve reference to a blob named "myblob".
-				var blockBlob = container.GetBlockBlobReference(file.Name);
-
-				var localFilePath = string.Format(@"{0}\{1}", m_localDirectory, file.Name.Replace(@"/", @"\"));
-
-				var fi = new FileInfo(localFilePath);
-				files.Add(fi, file.BackupType.ToFriendlyString());
-
-				// Skip the file if it exists
-				if (fi.Exists)
-				{
-					continue;
-				}
-
-				if (fi.DirectoryName != null)
-				{
-					var di = new DirectoryInfo(fi.DirectoryName);
-					if (!di.Exists)
-					{
-						di.Create();
-					}
-				}
-
-				using (var fileStream = File.Create(@fi.FullName))
-				{
-					Console.WriteLine("Downloading file [{0}]", file.Name);
-					blockBlob.DownloadToStream(fileStream);
-				}
-			}
-
-			return files;
 		}
 
 		/// <summary>
@@ -158,15 +109,15 @@ namespace AzureBlobStorageHelper
 				if (full)
 				{
 					// We want to run the template for the first file only (full backup)
-					var line = string.Format(@"DECLARE @fullBackup NVARCHAR(MAX) = N'{0}';", fileInfo.Key.FullName);
+					var line = $@"DECLARE @fullBackup NVARCHAR(MAX) = N'{fileInfo.Key.FullName}';";
 					template.AppendLine(line);
-					line = string.Format(@"DECLARE @path NVARCHAR(255) = N'{0}\{1}';", localDatabasePath.FullName, databaseFilePrefix);
+					line = $@"DECLARE @path NVARCHAR(255) = N'{localDatabasePath.FullName}\{databaseFilePrefix}';";
 					template.AppendLine(line);
 
 					// Create template restore script for moving files
-					line = string.Format(
-						@"DECLARE @template NVARCHAR(MAX) = N'RESTORE DATABASE [{0}] FROM DISK = N''{1}'' WITH {{%%MOVE%%}} REPLACE, NOUNLOAD, NORECOVERY, STATS = 5;'",
-						database, fileInfo.Key.FullName);
+					line =
+						$@"DECLARE @template NVARCHAR(MAX) = N'RESTORE DATABASE [{database}] FROM DISK = N''{fileInfo.Key.FullName
+							}'' WITH {{%%MOVE%%}} REPLACE, NOUNLOAD, NORECOVERY, STATS = 5;'";
 					template.AppendLine(line);
 
 					// Create the table variable to populate the backup file list
@@ -178,8 +129,7 @@ namespace AzureBlobStorageHelper
 					line = @"DECLARE @sql NVARCHAR(MAX) = N'', @i INT, @x INT = 1;";
 					template.AppendLine(line);
 
-					line = string.Format(@"DECLARE @header NVARCHAR(MAX) = 'RESTORE FILELISTONLY FROM DISK = ''{0}''';",
-						fileInfo.Key.FullName);
+					line = $@"DECLARE @header NVARCHAR(MAX) = 'RESTORE FILELISTONLY FROM DISK = ''{fileInfo.Key.FullName}''';";
 					template.AppendLine(line);
 
 					// Get the file header info for this backup
@@ -244,8 +194,10 @@ namespace AzureBlobStorageHelper
 
 			var filesToDownload = ParseLatestBackup(blobItems, database);
 
+			var dh = new DownloadHelper();
+
 			// Actually download the files
-			var files = DownloadFilesFromAzure(filesToDownload);
+			var files = dh.DownloadFilesFromAzure(filesToDownload);
 
 			// Generate the script and return it
 			return BuildRestoreScript(files);
