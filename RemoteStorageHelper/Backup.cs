@@ -1,4 +1,4 @@
-﻿namespace AzureBlobStorageHelper
+﻿namespace RemoteStorageHelper
 {
 	public enum Backup
 	{

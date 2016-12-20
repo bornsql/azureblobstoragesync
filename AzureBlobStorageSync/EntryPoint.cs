@@ -1,5 +1,7 @@
 ﻿using System;
-using AzureBlobStorageHelper;
+using System.Diagnostics;
+using System.Reflection;
+using RemoteStorageHelper;
 
 namespace AzureBlobStorageSync
 {
@@ -15,9 +17,10 @@ namespace AzureBlobStorageSync
 			m_isDebug = false;
 #endif
 
+			Console.Title = $"Azure Blob Storage Sync Tool {FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion}";
 			Console.WriteLine(ConsoleHelper.Header());
-			var syncHelper = new SyncHelper(m_isDebug);
-			syncHelper.Sync();
+			var syncHelper = new SyncHelper(ItemClass.Blob, m_isDebug);
+			syncHelper.SyncAzureStorage();
 		}
 	}
 }

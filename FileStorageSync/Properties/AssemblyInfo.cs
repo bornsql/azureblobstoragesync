@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("AzureBlobStorageHelper")]
+[assembly: AssemblyTitle("FileStorageSync")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("AzureBlobStorageHelper")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyCompany("Born SQL")]
+[assembly: AssemblyProduct("FileStorageSync")]
+[assembly: AssemblyCopyright("Copyright (c) Randolph West")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("248cdf32-2596-4b60-86a7-033250de0edf")]
+[assembly: Guid("4d3dc287-0f1a-4f05-b3a0-8906fd5862c1")]
 
 // Version information for an assembly consists of the following four values:
 //
