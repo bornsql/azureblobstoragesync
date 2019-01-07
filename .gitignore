@@ -1,2 +1,10 @@
 .DS_Store
+obj
+bin
+packages
 AzureBlobStorageRestore/.DS_Store
+.vs
+AzureBlobStorageRestore/bin
+AzureBlobStorageRestore/obj
+*.user
+MigrationBackup

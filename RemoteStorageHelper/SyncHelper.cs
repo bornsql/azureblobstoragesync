@@ -12,6 +12,7 @@ namespace RemoteStorageHelper
 		private readonly bool m_copyFilesToRemoteStorage;
 		private readonly bool m_deleteExplicitFilesFromRemoteStorage;
 		private readonly bool m_deleteMissingFilesFromRemoteStorage;
+		private readonly bool m_deleteMissingFilesFromLocalStorage;
 		private readonly bool m_fetchExplicitFilesFromRemoteStorage;
 		private readonly bool m_fetchFilesFromRemoteStorage;
 		private readonly bool m_isDebug;
@@ -23,6 +24,7 @@ namespace RemoteStorageHelper
 		private readonly DirectoryInfo m_localDirectory;
 		private readonly ItemClass m_remoteItemClass;
 		private readonly ItemSortOrder m_itemSortOrder;
+		private readonly bool m_isRunningOnWindows;
 
 		// Azure-specific
 		private readonly AzureStorageHelper m_azureStorageHelper;
@@ -52,14 +54,17 @@ namespace RemoteStorageHelper
 				m_remotePassword = ConfigHelper.GetFileStoragePassword();
 			}
 
-			// Get the application settings
-			m_localDirectory = new DirectoryInfo(ConfigHelper.GetConfigurationValue("LocalPath"));
+            m_isRunningOnWindows = Path.DirectorySeparatorChar.Equals('\\') ? true : false;
+
+            // Get the application settings
+            m_localDirectory = new DirectoryInfo(ConfigHelper.GetConfigurationValue("LocalPath"));
 			m_remoteStorage = new DirectoryInfo(ConfigHelper.GetConfigurationValue("RemoteStorage"));
 
 			m_copyFilesToRemoteStorage = ConfigHelper.GetConfigurationBoolean("CopyFilesToRemoteStorage");
 			m_deleteExplicitFilesFromRemoteStorage = ConfigHelper.GetConfigurationBoolean("DeleteExplicitFilesFromRemoteStorage");
 			m_fetchExplicitFilesFromRemoteStorage = ConfigHelper.GetConfigurationBoolean("FetchExplicitFilesFromRemoteStorage");
 			m_deleteMissingFilesFromRemoteStorage = ConfigHelper.GetConfigurationBoolean("DeleteMissingFilesFromRemoteStorage");
+			m_deleteMissingFilesFromLocalStorage = ConfigHelper.GetConfigurationBoolean("DeleteMissingFilesFromLocalStorage");
 			m_fetchFilesFromRemoteStorage = ConfigHelper.GetConfigurationBoolean("FetchFilesFromRemoteStorage");
 			m_explicitFilesToDeleteMatchingString = ConfigHelper.GetConfigurationValue("ExplicitFilesToDeleteMatchingString");
 			m_explicitFilesToFetchMatchingString = ConfigHelper.GetConfigurationValue("ExplicitFilesToFetchMatchingString");
@@ -176,8 +181,9 @@ namespace RemoteStorageHelper
 
 			foreach (var file in filesToCopy)
 			{
-				// Retrieve reference to a blob named "myblob".
-				var blockBlob = container.GetBlockBlobReference(file.Name.Replace(@"\", @"/"));
+                // Retrieve reference to a blob named "myblob".
+
+                var blockBlob = container.GetBlockBlobReference(m_isRunningOnWindows ? file.Name.Replace(@"\", @"/") : file.Name);
 
 				if (!file.Exists)
 				{
@@ -244,7 +250,26 @@ namespace RemoteStorageHelper
 			}
 		}
 
-		private void DeleteFromAzureStorage(IEnumerable<RemoteItem> filesToDeleteRemotely, bool encryptedFilesOnly)
+        private void DeleteFromLocalStorage(IEnumerable<FileInfo> filesToDeleteLocally, bool encryptedFilesOnly)
+        {
+            foreach (var file in filesToDeleteLocally)
+            {
+                if (File.Exists(file.FullName))
+                {
+                    if (!m_isDebug)
+                    {
+                        Console.WriteLine($@"Deleting local file [{file}]");
+                        File.Delete(file.FullName);
+                    }
+                    else
+                    {
+                        Console.WriteLine($@"DEBUG: Deleting local file [{file}]");
+                    }
+				}
+            }
+        }
+
+        private void DeleteFromAzureStorage(IEnumerable<RemoteItem> filesToDeleteRemotely, bool encryptedFilesOnly)
 		{
 			var blobClient = m_azureStorageHelper.StorageAccount.CreateCloudBlobClient();
 			var container = blobClient.GetContainerReference(m_azureStorageHelper.ContainerName);
@@ -258,7 +283,7 @@ namespace RemoteStorageHelper
 					continue;
 				}
 
-				var blockBlob = container.GetBlockBlobReference(file.Name.Replace(@"\", @"/"));
+				var blockBlob = container.GetBlockBlobReference(m_isRunningOnWindows ? file.Name.Replace(@"\", @"/") : file.Name);
 
 				if (!m_isDebug)
 				{
@@ -324,6 +349,7 @@ namespace RemoteStorageHelper
 			Console.WriteLine("Starting file comparison ...");
 
 			var filesToDeleteRemotely = new List<RemoteItem>(remoteFiles.Count);
+            var filesToDeleteLocally = new List<FileInfo>(localFiles.Count);
 			var filesToCopyToRemoteStorage = new List<FileInfo>(localFiles.Count);
 			var filesToCopyFromRemoteStorage = new List<RemoteItem>(remoteFiles.Count);
 
@@ -352,6 +378,11 @@ namespace RemoteStorageHelper
 										   where !localFiles.Exists(x => x.Name == remoteFile.Name)
 										   select remoteFile);
 
+			// Exists on local, does not exist on File Path - delete from local
+			filesToDeleteLocally.AddRange(from localFile in localFiles
+                                          where !remoteFiles.Exists(x => x.Name == localFile.Name)
+                                          select localFile);
+
 			// Exists on local, does not exist on File Path - copy to File Path
 			filesToCopyToRemoteStorage.AddRange(from localFile in localFiles
 												where !remoteFiles.Exists(x => x.Name == localFile.Name)
@@ -371,6 +402,15 @@ namespace RemoteStorageHelper
 						? filesToCopyFromRemoteStorage.Where(remoteFile => remoteFile.Name.Contains(m_explicitFilesToFetchMatchingString))
 						: filesToCopyFromRemoteStorage, m_itemSortOrder);
 			}
+
+            if (m_deleteMissingFilesFromLocalStorage)
+			{
+                syncHelper.DeleteFromLocalStorage(filesToDeleteLocally, m_syncEncryptedFilesOnly);
+			}
+            else
+            {
+                Console.WriteLine("No files will be deleted from Local File Storage.");
+            }
 
 			if (m_deleteMissingFilesFromRemoteStorage)
 			{
@@ -417,7 +457,7 @@ namespace RemoteStorageHelper
 			// Exists on RemoteStorage, does not exist on local - fetch from Remote Storage
 			foreach (var azureFile in blobItems)
 			{
-				var localMatch = azureFile.Name.Replace(@"/", @"\");
+				var localMatch = m_isRunningOnWindows ? azureFile.Name.Replace(@"\", @"/") : azureFile.Name;
 
 				var localFile = localFiles.FirstOrDefault(x => x.Value == localMatch);
 
@@ -436,12 +476,12 @@ namespace RemoteStorageHelper
 
 			// Exists on RemoteStorage, does not exist on local - delete from RemoteStorage
 			filesToDeleteOnRemoteStorage.AddRange(from azureFile in blobItems
-												  where !localFiles.ContainsValue(azureFile.Name.Replace(@"/", @"\"))
+												  where !localFiles.ContainsValue(m_isRunningOnWindows ? azureFile.Name.Replace(@"\", @"/") : azureFile.Name)
 												  select azureFile);
 
 			// Exists on local, does not exist on RemoteStorage - copy to RemoteStorage
 			filesToCopyToRemoteStorage.AddRange(from localFile in localFiles
-												where !blobItems.Exists(x => x.Name.Replace(@"/", @"\") == localFile.Value)
+                                                where !blobItems.Exists(x => (m_isRunningOnWindows ? x.Name.Replace(@"/", @"\") : x.Name) == localFile.Value)
 												select localFile.Key);
 
 			if (m_isDebug)
