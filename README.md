@@ -24,7 +24,7 @@ The AzureBlobStorageSync and Restore requires:
 The FileStorageSync and Restore requires:
 - .NET Framework 4.7.2
 
-The Sync and Restore components have a dependency on the *Microsoft.WindowsAzure.Storage* NuGet package. However, this package has its own associated packages, which are downloaded but never used. These can usually be safely deleted, except for *Microsoft.Azure.KeyVault.Core.dll*.
+The Sync and Restore components have a dependency on the *Microsoft.WindowsAzure.Storage* NuGet package, which has its own associated packages, which are downloaded but never used. If you want to delete any of them, remember to keep *Microsoft.Azure.KeyVault.Core.dll*.
 
 ### Connection Configuration File
 
@@ -33,7 +33,7 @@ For the **AzureBlobStorageSync** `connections.config` file, you can add your cre
 	<?xml version="1.0" encoding="utf-8"?>
 	<connectionStrings>
 	    <clear /> // Clears any other connectionStrings in the app.config file
-	    <add name="AzureConnectionString" connectionString="DefaultEndpointsProtocol=https;AccountName=<storageAccount>;AccountKey=<redacted>" />
+	    <add name="RemoteStorageConnectionString" connectionString="DefaultEndpointsProtocol=https;AccountName=<storageAccount>;AccountKey=<redacted>" />
 	</connectionStrings>
 
 This connection string can be copied and pasted from the [Azure Portal][2], from the **Primary Connection String** for your storage account.
