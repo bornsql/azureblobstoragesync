@@ -33,8 +33,7 @@ namespace RemoteStorageHelper
 			// Loop over items within the container and fetch the blob files
 			foreach (var item in container.ListBlobs(null, true))
 			{
-				var blockBlob = item as CloudBlockBlob;
-				if (blockBlob != null)
+			    if (item is CloudBlockBlob blockBlob)
 				{
 					var blob = blockBlob;
 
@@ -55,8 +54,7 @@ namespace RemoteStorageHelper
 				}
 				else
 				{
-					var pageBlob = item as CloudPageBlob;
-					if (pageBlob == null) continue;
+				    if (!(item is CloudPageBlob pageBlob)) continue;
 					var blob = pageBlob;
 
 					if (blob.Name.Length >= 15)

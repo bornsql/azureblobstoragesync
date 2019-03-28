@@ -5,16 +5,17 @@ using RemoteStorageHelper;
 
 namespace FileStorageSync
 {
-	public static class EntryPoint
-	{
-		private static bool m_isDebug;
+    public static class EntryPoint
+    {
+        private static bool m_isDebug;
 
-		static void Main(string[] args)
-		{
-			Console.Title = $"File Storage Sync Tool {FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion}";
-			Console.WriteLine(ConsoleHelper.Header());
-			var syncHelper = new SyncHelper(ItemClass.File, m_isDebug);
-			syncHelper.SyncFileStorage();
-		}
-	}
+        static void Main(string[] args)
+        {
+            var ver = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
+            Console.Title = $"File Storage Sync Tool {ver}";
+            Console.WriteLine(ConsoleHelper.Header(ver));
+            var syncHelper = new SyncHelper(ItemClass.File, m_isDebug);
+            syncHelper.SyncFileStorage();
+        }
+    }
 }

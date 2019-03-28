@@ -18,11 +18,11 @@ Run this tool on any machine that can access your SQL Server backup files using 
 
 The AzureBlobStorageSync and Restore requires:
 - Azure Blob Storage subscription
-- .NET Framework 4.0
+- .NET Framework 4.7.2
 - Internet access!
 
 The FileStorageSync and Restore requires:
-- .NET Framework 4.0
+- .NET Framework 4.7.2
 
 The Sync and Restore components have a dependency on the *Microsoft.WindowsAzure.Storage* NuGet package. However, this package has its own associated packages, which are downloaded but never used. These can usually be safely deleted, except for *Microsoft.Azure.KeyVault.Core.dll*.
 

@@ -6,5 +6,17 @@ AzureBlobStorageRestore/.DS_Store
 .vs
 AzureBlobStorageRestore/bin
 AzureBlobStorageRestore/obj
+/.vs
+/AzureBlobStorageRestore/bin
+/AzureBlobStorageRestore/obj
+/AzureBlobStorageSync/bin
+/AzureBlobStorageSync/obj
+/FileStorageRestore/bin
+/FileStorageRestore/obj
+/FileStorageSync/bin
+/FileStorageSync/obj
+/packages
+/RemoteStorageHelper/bin
+/RemoteStorageHelper/obj
 *.user
 MigrationBackup

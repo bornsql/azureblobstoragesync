@@ -56,7 +56,7 @@ namespace RemoteStorageHelper
 						fileItems.Add(fi);
 					}
 
-					Console.Write("\rRetrieved {0} item(s) ...", fileItems.Count);
+					Console.Write($"{Environment.NewLine}Retrieved {fileItems.Count} item(s) ...");
 				}
 				Console.WriteLine();
 			}

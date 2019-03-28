@@ -11,8 +11,9 @@ namespace FileStorageRestore
 	{
 		static void Main(string[] args)
 		{
-			Console.Title = $"File Storage Restore Tool {FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion}";
-			Console.WriteLine(ConsoleHelper.Header());
+            var ver = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
+            Console.Title = $"File Storage Restore Tool {ver}";
+			Console.WriteLine(ConsoleHelper.Header(ver));
 			var restoreHelper = new RestoreHelper(ItemClass.File);
 
 			var database = ConfigHelper.GetConfigurationValue("DatabaseToRestore");

@@ -10,9 +10,10 @@ namespace AzureBlobStorageRestore
 	public static class EntryPoint
 	{
 		static void Main(string[] args)
-		{
-			Console.Title = $"Azure Blob Storage Restore Tool {FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion}";
-			Console.WriteLine(ConsoleHelper.Header());
+        {
+            var ver = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
+            Console.Title = $"Azure Blob Storage Restore Tool {ver}";
+			Console.WriteLine(ConsoleHelper.Header(ver));
 			var restoreHelper = new RestoreHelper(ItemClass.Blob);
 
 			var database = ConfigHelper.GetConfigurationValue("DatabaseToRestore");

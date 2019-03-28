@@ -17,8 +17,9 @@ namespace AzureBlobStorageSync
 			m_isDebug = false;
 #endif
 
-			Console.Title = $"Azure Blob Storage Sync Tool {FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion}";
-			Console.WriteLine(ConsoleHelper.Header());
+            var ver = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
+            Console.Title = $"Azure Blob Storage Sync Tool {ver}";
+			Console.WriteLine(ConsoleHelper.Header(ver));
 			var syncHelper = new SyncHelper(ItemClass.Blob, m_isDebug);
 			syncHelper.SyncAzureStorage();
 		}
