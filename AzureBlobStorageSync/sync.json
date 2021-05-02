@@ -1,0 +1,16 @@
+{
+  "Container": "sqlbackup",
+  "LocalPath": "C:\\SQLData\\Backup",
+  "CopyFilesToRemoteStorage": false,
+  "FetchFilesFromRemoteStorage": true,
+  "CompressAndEncrypt": true,
+  "EncryptOnly": false,
+  "FetchExplicitFilesFromRemoteStorage": true,
+  "ExplicitFilesToFetchMatchingString": "fetch_me",
+  "ItemSortOrder": "Name",
+  "DeleteMissingFilesFromAzure": false,
+  "DeleteExplicitFilesFromAzure": true,
+  "ExplicitFilesToDeleteMatchingString": "delete_me",
+  "DumpFileList": true,
+  "DebugOverride": true
+}

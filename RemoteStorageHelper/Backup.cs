@@ -1,14 +1,7 @@
-﻿namespace RemoteStorageHelper
-{
-	public enum Backup
-	{
-		Unknown,
-		Full,
-		CopyOnly,
-		Differential,
-		TransactionLog
-	}
+﻿using RemoteStorageHelper.Enums;
 
+namespace RemoteStorageHelper
+{
 	public static class BackupLevelExtensions
 	{
 		/// <summary>
@@ -16,19 +9,16 @@
 		/// </summary>
 		/// <param name="me">The Backup Enumerator</param>
 		/// <returns></returns>
-		public static string ToFriendlyString(this Backup me)
+		public static string ToFriendlyString(this BackupType me)
 		{
-			switch (me)
+			return me switch
 			{
-				case Backup.Full:
-				case Backup.CopyOnly:
-				case Backup.Differential:
-					return "DATABASE";
-				case Backup.TransactionLog:
-					return "LOG";
-				default:
-					return "--";
-			}
+				BackupType.Full => "DATABASE",
+				BackupType.CopyOnly => "DATABASE",
+				BackupType.Differential => "DATABASE",
+				BackupType.TransactionLog => "LOG",
+				_ => "--"
+			};
 		}
 	}
 }

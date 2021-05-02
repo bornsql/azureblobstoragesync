@@ -20,3 +20,4 @@ AzureBlobStorageRestore/obj
 /RemoteStorageHelper/obj
 *.user
 MigrationBackup
+.idea

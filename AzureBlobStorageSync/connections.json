@@ -1,0 +1,3 @@
+﻿{
+	"RemoteStorageConnectionString": "DefaultEndpointsProtocol=https;AccountName=enter_storage_account_here;AccountKey=enter_key_here"
+}

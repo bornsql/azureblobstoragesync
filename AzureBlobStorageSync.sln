@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureBlobStorageSync", "AzureBlobStorageSync\AzureBlobStorageSync.csproj", "{3B73E8ED-231A-439D-ABBD-C8CECBC60B26}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureBlobStorageRestore", "AzureBlobStorageRestore\AzureBlobStorageRestore.csproj", "{B689CD6F-7000-42E0-AFA2-C8F18DCE5508}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileStorageRestore", "FileStorageRestore\FileStorageRestore.csproj", "{D1063420-A5A3-40E0-8726-1E432EAE19B9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileStorageSync", "FileStorageSync\FileStorageSync.csproj", "{4D3DC287-0F1A-4F05-B3A0-8906FD5862C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteStorageHelper", "RemoteStorageHelper\RemoteStorageHelper.csproj", "{64E93E04-FB17-4B2E-BDBE-F8E2B0CFE34F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureBlobStorageSync", "AzureBlobStorageSync\AzureBlobStorageSync.csproj", "{E67C35DB-4C44-4F72-BE63-9819862BD2F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureBlobStorageRestore", "AzureBlobStorageRestore\AzureBlobStorageRestore.csproj", "{F336B448-617B-4CD8-9819-08D149AEE76D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteStorageHelper", "RemoteStorageHelper\RemoteStorageHelper.csproj", "{61AB1AEA-5B3E-4C75-A50A-FA4D4E10F165}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +19,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3B73E8ED-231A-439D-ABBD-C8CECBC60B26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3B73E8ED-231A-439D-ABBD-C8CECBC60B26}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3B73E8ED-231A-439D-ABBD-C8CECBC60B26}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3B73E8ED-231A-439D-ABBD-C8CECBC60B26}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B689CD6F-7000-42E0-AFA2-C8F18DCE5508}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B689CD6F-7000-42E0-AFA2-C8F18DCE5508}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B689CD6F-7000-42E0-AFA2-C8F18DCE5508}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B689CD6F-7000-42E0-AFA2-C8F18DCE5508}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D1063420-A5A3-40E0-8726-1E432EAE19B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D1063420-A5A3-40E0-8726-1E432EAE19B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1063420-A5A3-40E0-8726-1E432EAE19B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -35,12 +27,23 @@ Global
 		{4D3DC287-0F1A-4F05-B3A0-8906FD5862C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D3DC287-0F1A-4F05-B3A0-8906FD5862C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D3DC287-0F1A-4F05-B3A0-8906FD5862C1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{64E93E04-FB17-4B2E-BDBE-F8E2B0CFE34F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{64E93E04-FB17-4B2E-BDBE-F8E2B0CFE34F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{64E93E04-FB17-4B2E-BDBE-F8E2B0CFE34F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{64E93E04-FB17-4B2E-BDBE-F8E2B0CFE34F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E67C35DB-4C44-4F72-BE63-9819862BD2F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E67C35DB-4C44-4F72-BE63-9819862BD2F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E67C35DB-4C44-4F72-BE63-9819862BD2F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E67C35DB-4C44-4F72-BE63-9819862BD2F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F336B448-617B-4CD8-9819-08D149AEE76D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F336B448-617B-4CD8-9819-08D149AEE76D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F336B448-617B-4CD8-9819-08D149AEE76D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F336B448-617B-4CD8-9819-08D149AEE76D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61AB1AEA-5B3E-4C75-A50A-FA4D4E10F165}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61AB1AEA-5B3E-4C75-A50A-FA4D4E10F165}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61AB1AEA-5B3E-4C75-A50A-FA4D4E10F165}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61AB1AEA-5B3E-4C75-A50A-FA4D4E10F165}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		version = 2.0
 	EndGlobalSection
 EndGlobal

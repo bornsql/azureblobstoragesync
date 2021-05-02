@@ -1,0 +1,18 @@
+{
+  "Container": "sqlbackup",
+  "CopyFilesToRemoteStorage": false,
+  "FetchFilesFromRemoteStorage": true,
+  "DumpFileList": false,
+  "ItemSortOrder": "Name",
+  "DebugOverride": true,
+  "DumpFile": "C:\\Temp\\AzureBlobStorageDumpFile.txt",
+  "DatabaseRestoredName": "ABSR_restore_me",
+  "DatabaseRestoredFilePrefix": "_ABSR_",
+  "DatabaseRestoredPath": "C:\\Temp",
+  "DatabaseToRestore": "restore_me",
+  "LocalPath": "C:\\SQLData\\Backup",
+  "RestoreScriptFile": "C:\\Temp\\ABSRestore_{%%DATABASE%%}_{%%MASK%%}.sql",
+  "RestoreScriptMask": "yyyyMMdd_HHmmss",
+  "StopAtEnabled": false,
+  "StopAtDateTime": "2019:03:01 14:31:09"
+}

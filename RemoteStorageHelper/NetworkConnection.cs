@@ -2,14 +2,16 @@
 using System.ComponentModel;
 using System.Net;
 using System.Runtime.InteropServices;
+using RemoteStorageHelper.Entities;
+using RemoteStorageHelper.Enums;
 
 namespace RemoteStorageHelper
 {
-	public class NetworkConnection : IDisposable
+	public sealed class NetworkConnection : IDisposable
 	{
 		// http://stackoverflow.com/a/1197430/5807980
 
-		string m_networkName;
+		private readonly string m_networkName;
 
 		public NetworkConnection(string networkName, NetworkCredential credentials)
 		{
@@ -19,7 +21,7 @@ namespace RemoteStorageHelper
 			{
 				Scope = ResourceScope.GlobalNetwork,
 				ResourceType = ResourceType.Disk,
-				DisplayType = ResourceDisplaytype.Share,
+				DisplayType = ResourceDisplayType.Share,
 				RemoteName = networkName
 			};
 
@@ -27,19 +29,11 @@ namespace RemoteStorageHelper
 				? credentials.UserName
 				: $@"{credentials.Domain}\{credentials.UserName}";
 
-			var result = WNetAddConnection2(
-				netResource,
-				credentials.Password,
-				userName,
-				0);
+			var result = WNetAddConnection2(netResource, credentials.Password, userName, 0);
 
 			if (result != 0)
 			{
-				result = WNetAddConnection2(
-				netResource,
-				string.Empty,
-				string.Empty,
-				0);
+				result = WNetAddConnection2(netResource, string.Empty, string.Empty, 0);
 
 				if (result != 0)
 				{
@@ -59,7 +53,7 @@ namespace RemoteStorageHelper
 			GC.SuppressFinalize(this);
 		}
 
-		protected virtual void Dispose(bool disposing)
+		private void Dispose(bool disposing)
 		{
 			WNetCancelConnection2(m_networkName, 0, true);
 		}

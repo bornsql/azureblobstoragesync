@@ -2,7 +2,7 @@
 
 Azure Blob Storage Backup is a feature built right into SQL Server, but it is only available in SQL Server 2012 Service Pack 1 CU 2 and higher.
 
-Furthermore, there is no ability in any version of SQL Server prior to 2016, to back up to more than one location simultaneously. You have to choose between local backups or Azure Blob Storage. It is not possible to pick both. This is especially problematic if you perform Differential Backups.
+Furthermore, prior to SQL Server 2016, there is no way to back up to more than one location simultaneously. You have to choose between local backups or Azure Blob Storage. It is not possible to pick both. This is especially problematic if you perform Differential Backups.
 
 **AzureBlobStorageSync** is a free tool that allows you to continue backing up your database locally, for any version of SQL Server, and synchronise your files to Azure Blob Storage on a schedule of your choosing.
 
@@ -18,34 +18,30 @@ Run this tool on any machine that can access your SQL Server backup files using 
 
 The AzureBlobStorageSync and Restore requires:
 - Azure Blob Storage subscription
-- .NET Framework 4.7.2
+- .NET Core 3.1 LTS
 - Internet access!
 
 The FileStorageSync and Restore requires:
-- .NET Framework 4.7.2
+- .NET Core 3.1 LTS
 
-The Sync and Restore components have a dependency on the *Microsoft.WindowsAzure.Storage* NuGet package, which has its own associated packages, which are downloaded but never used. If you want to delete any of them, remember to keep *Microsoft.Azure.KeyVault.Core.dll*.
+The Sync and Restore components have a dependency on the *Azure.Storage.Blobs* NuGet package.
 
 ### Connection Configuration File
 
-For the **AzureBlobStorageSync** `connections.config` file, you can add your credentials to a Blob Storage account. The format of this file is as follows:
+For the **AzureBlobStorageSync** `connections.json` file, you can add your credentials to a Blob Storage account. The file is in JSON format, as follows:
 
-	<?xml version="1.0" encoding="utf-8"?>
-	<connectionStrings>
-	    <clear /> // Clears any other connectionStrings in the app.config file
-	    <add name="RemoteStorageConnectionString" connectionString="DefaultEndpointsProtocol=https;AccountName=<storageAccount>;AccountKey=<redacted>" />
-	</connectionStrings>
+	{
+	    "RemoteStorageConnectionString": "DefaultEndpointsProtocol=https;AccountName=<storageAccount>;AccountKey=<redacted>"
+	}
 
 This connection string can be copied and pasted from the [Azure Portal][2], from the **Primary Connection String** for your storage account.
 
-For the **FileStorageSync** `connections.config` file, the format is as follows:
+For the **FileStorageSync** `connections.json` file, the format is as follows:
 
-	<?xml version="1.0" encoding="utf-8"?\>
-	<connectionStrings\>
-	    <clear /\> // Clears any other connectionStrings in the app.config file
-	    <add name="FileStorageUserAccount" connectionString="username"/\>
-	    <add name="FileStoragePassword" connectionString ="password"/\>
-	</connectionStrings\>
+	{
+	    "FileStorageUserAccount": "username",
+	    "FileStoragePassword": "password"
+	}
 
 [1]:	https://ola.hallengren.com/
 [2]:	https://portal.azure.com

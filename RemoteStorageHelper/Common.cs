@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Net;
+using RemoteStorageHelper.Entities;
+using RemoteStorageHelper.Enums;
+using RemoteStorageHelper.Helpers;
 
 namespace RemoteStorageHelper
 {
@@ -11,12 +13,12 @@ namespace RemoteStorageHelper
 		private readonly DirectoryInfo m_localDirectory;
 		private readonly string m_encryptedFileExtension;
 
-		public NetworkCredential NetworkCredentials { private get; set; }
-
 		public Common()
 		{
-			m_localDirectory = new DirectoryInfo(ConfigHelper.GetConfigurationValue("LocalPath"));
-			m_encryptedFileExtension = ConfigHelper.GetConfigurationValue("EncryptedFileExtension");
+			var config = JsonWrangler.ReadJsonItem<RestoreConfigurationEntity>(new FileInfo("restore.json"));
+
+			m_localDirectory = new DirectoryInfo(config.LocalPath);
+			m_encryptedFileExtension = config.EncryptedFileExtension;
 		}
 
 		/// <summary>
@@ -33,7 +35,9 @@ namespace RemoteStorageHelper
 
 			var splitter = name.Split('/'); // split out the file name from the RemoteStorage directory structure
 
-			var filename = splitter.Length == 1 ? splitter[0] : splitter[splitter.Length - 1];
+			var filename = splitter.Length == 1
+				? splitter[0]
+				: splitter[^1];
 
 			if (!(filename.EndsWith(".bak") || filename.EndsWith(".trn")))
 			{
@@ -56,7 +60,7 @@ namespace RemoteStorageHelper
 		/// </summary>
 		/// <param name="name">The file name.</param>
 		/// <returns></returns>
-		public static Backup ParseBackupTypeFromFileName(string name)
+		public static BackupType ParseBackupTypeFromFileName(string name)
 		{
 			// We know nothing about this item name.
 			// Hopefully it follows Ola Hallengren's naming convention, so let's start there
@@ -66,7 +70,9 @@ namespace RemoteStorageHelper
 
 			var splitter = name.Split('/'); // split out the file name from the RemoteStorage directory structure
 
-			var filename = splitter.Length == 1 ? splitter[0] : splitter[splitter.Length - 1];
+			var filename = splitter.Length == 1
+				? splitter[0]
+				: splitter[^1];
 
 			if (splitter.Length > 1) // hack out the backup type from the directory name
 			{
@@ -75,37 +81,33 @@ namespace RemoteStorageHelper
 			else
 			{
 				// Could just return the types here, but no accounting for Unknown
-				if (filename.Contains("_FULL_") && !filename.Contains("_FULL_COPY_ONLY_"))
+				if (filename.Contains("_FULL_", StringComparison.CurrentCultureIgnoreCase) &&
+					!filename.Contains("_FULL_COPY_ONLY_", StringComparison.CurrentCultureIgnoreCase))
 				{
 					method = "FULL";
 				}
-				else if (filename.Contains("_FULL_COPY_ONLY_"))
+				else if (filename.Contains("_FULL_COPY_ONLY_", StringComparison.CurrentCultureIgnoreCase))
 				{
 					method = "FULL_COPY_ONLY";
 				}
-				else if (filename.Contains("_DIFF_"))
+				else if (filename.Contains("_DIFF_", StringComparison.CurrentCultureIgnoreCase))
 				{
 					method = "DIFF";
 				}
-				else if (filename.Contains("_LOG_"))
+				else if (filename.Contains("_LOG_", StringComparison.CurrentCultureIgnoreCase))
 				{
 					method = "LOG";
 				}
 			}
 
-			switch (method)
+			return method switch
 			{
-				case "FULL":
-					return Backup.Full;
-				case "FULL_COPY_ONLY":
-					return Backup.CopyOnly;
-				case "DIFF":
-					return Backup.Differential;
-				case "LOG":
-					return Backup.TransactionLog;
-				default:
-					return Backup.Unknown;
-			}
+				"FULL" => BackupType.Full,
+				"FULL_COPY_ONLY" => BackupType.CopyOnly,
+				"DIFF" => BackupType.Differential,
+				"LOG" => BackupType.TransactionLog,
+				_ => BackupType.Unknown
+			};
 		}
 
 		/// <summary>
@@ -122,8 +124,9 @@ namespace RemoteStorageHelper
 				return localFiles;
 			}
 
-			var files = m_localDirectory.GetFiles(encryptedFilesOnly ? $"*{m_encryptedFileExtension}" : "*.*",
-				SearchOption.AllDirectories);
+			var files = m_localDirectory.GetFiles(encryptedFilesOnly
+				? $"*{m_encryptedFileExtension}"
+				: "*.*", SearchOption.AllDirectories);
 
 			foreach (var file in files)
 			{
@@ -133,7 +136,7 @@ namespace RemoteStorageHelper
 			return localFiles;
 		}
 
-		public static void SetFileCreationDate(RemoteItem file, FileSystemInfo fi)
+		public static void SetFileCreationDate(RemoteItemEntity file, FileSystemInfo fi)
 		{
 			var dt = DateTime.UtcNow;
 
@@ -160,17 +163,9 @@ namespace RemoteStorageHelper
 		/// <returns></returns>
 		public static DateTime? ParseDate(string date, string format = "yyyyMMdd_HHmmss")
 		{
-			DateTime dt;
-			return DateTime.TryParseExact(date, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt)
-				? (DateTime?)dt
+			return DateTime.TryParseExact(date, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dt)
+				? (DateTime?) dt
 				: null;
-		}
-
-		public static string GetStopAtTime()
-		{
-			return
-				ParseDate(ConfigHelper.GetConfigurationValue("StopAtDateTime"))?.ToString("yyyy-MM-dd HH:mm:ss") ??
-				DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 		}
 
 		public IEnumerable<FileInfo> GetFileList(string fileSearchPattern, string rootFolderPath)
@@ -186,6 +181,7 @@ namespace RemoteStorageHelper
 				{
 					yield return new FileInfo(t);
 				}
+
 				tmp = Directory.GetDirectories(rootFolderPath);
 				foreach (var t in tmp)
 				{
