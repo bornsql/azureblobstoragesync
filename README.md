@@ -8,44 +8,47 @@ Furthermore, there is no ability in any version of SQL Server prior to 2016, to 
 
 **FileStorageSync** allows you to synchronise your files to a UNC path on a schedule of your choosing.
 
-It can work alongside your existing backup process, and leverages [Ola Hallengren's][1] Maintenance Solution.
+It can work alongside your existing backup process, and leverages [Ola Hallengren's](https://ola.hallengren.com/) Maintenance Solution.
 
 There is a companion restore tool, **AzureBlobStorageRestore** (and **FileStorageRestore**), also free, which is able to download the latest database (including Full, Differential and Transaction Log Backups), only knowing the name of the database, and build a restore script. This is especially useful if you suffer a catastrophic failure and have no other knowledge of the backups (e.g. the content of the *msdb* database).
 
-### How Do I Do It?
+## Compatibility note
+
+_**2021-06-17:** This version of the tool will be replaced by a .NET Core 3.1 LTS version in the near future, with updated Azure Storage libraries. The new version is currently in testing._
+
+## How Do I Do It?
 
 Run this tool on any machine that can access your SQL Server backup files using UNC, or the SQL Server instance itself.
 
 The AzureBlobStorageSync and Restore requires:
+
 - Azure Blob Storage subscription
 - .NET Framework 4.7.2
 - Internet access!
 
 The FileStorageSync and Restore requires:
+
 - .NET Framework 4.7.2
 
 The Sync and Restore components have a dependency on the *Microsoft.WindowsAzure.Storage* NuGet package, which has its own associated packages, which are downloaded but never used. If you want to delete any of them, remember to keep *Microsoft.Azure.KeyVault.Core.dll*.
 
-### Connection Configuration File
+## Connection Configuration File
 
 For the **AzureBlobStorageSync** `connections.config` file, you can add your credentials to a Blob Storage account. The format of this file is as follows:
 
-	<?xml version="1.0" encoding="utf-8"?>
-	<connectionStrings>
-	    <clear /> // Clears any other connectionStrings in the app.config file
-	    <add name="RemoteStorageConnectionString" connectionString="DefaultEndpointsProtocol=https;AccountName=<storageAccount>;AccountKey=<redacted>" />
-	</connectionStrings>
+    <?xml version="1.0" encoding="utf-8"?>
+    <connectionStrings>
+        <clear /> // Clears any other connectionStrings in the app.config file
+        <add name="RemoteStorageConnectionString" connectionString="DefaultEndpointsProtocol=https;AccountName=<storageAccount>;AccountKey=<redacted>" />
+    </connectionStrings>
 
-This connection string can be copied and pasted from the [Azure Portal][2], from the **Primary Connection String** for your storage account.
+This connection string can be copied and pasted from the [Azure Portal](https://portal.azure.com), from the **Primary Connection String** for your storage account.
 
 For the **FileStorageSync** `connections.config` file, the format is as follows:
 
-	<?xml version="1.0" encoding="utf-8"?\>
-	<connectionStrings\>
-	    <clear /\> // Clears any other connectionStrings in the app.config file
-	    <add name="FileStorageUserAccount" connectionString="username"/\>
-	    <add name="FileStoragePassword" connectionString ="password"/\>
-	</connectionStrings\>
-
-[1]:	https://ola.hallengren.com/
-[2]:	https://portal.azure.com
+    <?xml version="1.0" encoding="utf-8"?\>
+    <connectionStrings\>
+        <clear /\> // Clears any other connectionStrings in the app.config file
+        <add name="FileStorageUserAccount" connectionString="username"/\>
+        <add name="FileStoragePassword" connectionString ="password"/\>
+    </connectionStrings\>
